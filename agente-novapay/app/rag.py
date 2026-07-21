@@ -12,6 +12,8 @@ llm = ChatGoogleGenerativeAI(
     model="gemini-flash-latest",
     temperature=0,
     google_api_key=GEMINI_API_KEY,
+    max_retries=1,
+    timeout=30,
 )
 
 modelo_embeddings = GoogleGenerativeAIEmbeddings(
