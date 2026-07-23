@@ -10,7 +10,10 @@ from app.ingest import cargar_documentos, dividir_en_chunks
 from app.rag import construir_vectorstore
 from app.graph import construir_grafo
 
-st.set_page_config(page_title="Agente NovaPay", page_icon="🤖")
+st.set_page_config(page_title="Agente NovaPay", page_icon="🔐")
+
+AVATAR_USUARIO = "🧑"
+AVATAR_AGENTE = "🤖"
 
 
 @st.cache_resource(show_spinner="Cargando documentos y preparando el agente...")
@@ -23,7 +26,7 @@ def cargar_agente():
 
 grafo = cargar_agente()
 
-st.title("🤖 Agente NovaPay")
+st.title("😎 Agente NovaPay")
 st.caption(
     "Estás conversando con un agente de inteligencia artificial, no con una persona. "
     "Responde con base en los documentos internos de NovaPay."
@@ -34,7 +37,8 @@ if "historial" not in st.session_state:
 
 # Mostrar historial de la conversación
 for i, mensaje in enumerate(st.session_state.historial):
-    with st.chat_message(mensaje["role"]):
+    avatar = AVATAR_USUARIO if mensaje["role"] == "user" else AVATAR_AGENTE
+    with st.chat_message(mensaje["role"], avatar=avatar):
         st.markdown(mensaje["content"])
 
         if mensaje["role"] == "assistant":
@@ -55,10 +59,10 @@ pregunta = st.chat_input("Escribe tu pregunta...")
 
 if pregunta:
     st.session_state.historial.append({"role": "user", "content": pregunta})
-    with st.chat_message("user"):
+    with st.chat_message("user", avatar=AVATAR_USUARIO):
         st.markdown(pregunta)
 
-    with st.chat_message("assistant"):
+    with st.chat_message("assistant", avatar=AVATAR_AGENTE):
         with st.spinner("Pensando..."):
             resultado = grafo.invoke({"pregunta": pregunta})
 
